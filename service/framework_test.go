@@ -68,6 +68,7 @@ func init() {
 	drivers.Drivers["scaleHost"] = &MockHostDriver{expectedConfigLabel: expectedHostConfigLabel, expectedConfigHostTemplate: expectedHostConfigHostTemplate}
 
 	expectedServiceWebhookTemplate := model.ServiceWebhook{
+		ProjectID:   "1a5",
 		ServiceName: "pipeline-server",
 		Port:        "60080",
 		Path:        "/v1",

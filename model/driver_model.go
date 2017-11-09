@@ -35,6 +35,7 @@ type ScaleHost struct {
 
 //ServiceWebhook driver
 type ServiceWebhook struct {
+	ProjectID   string `json:"projectId,omitempty" mapstructure:"projectId"`
 	ServiceName string `json:"serviceName,omitempty" mapstructure:"serviceName"`
 	Port        string `json:"port,omitempty" mapstructure:"port"`
 	Path        string `json:"path,omitempty" mapstructure:"path"`

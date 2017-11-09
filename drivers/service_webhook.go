@@ -39,13 +39,9 @@ func (s *ServiceWebhookDriver) Execute(conf interface{}, apiClient *client.Ranch
 	}
 
 	arry := strings.Split(request.RequestURI, "?")
-	projectID, errCode, err := getProjectID(request)
-	if err != nil {
-		return errCode, err
-	}
 	CattleAddr := rancherConfig.CattleURL[:len(rancherConfig.CattleURL)-3]
 	log.Debugf("Excute rancherConfig.CattleURL %v", CattleAddr)
-	postURL := fmt.Sprintf("%s/r/projects/%s/%s:%s%s", CattleAddr, projectID, webhookConfig.ServiceName, webhookConfig.Port, webhookConfig.Path)
+	postURL := fmt.Sprintf("%s/r/projects/%s/%s:%s%s", CattleAddr, webhookConfig.ProjectID, webhookConfig.ServiceName, webhookConfig.Port, webhookConfig.Path)
 
 	// append the query parameters to the postURL
 	if arry[1] != "" {
@@ -55,7 +51,6 @@ func (s *ServiceWebhookDriver) Execute(conf interface{}, apiClient *client.Ranch
 	log.Debugf("Excute requestPayloadByte %v", requestPayloadByte)
 	hopRequest, err := http.NewRequest("POST", postURL, bytes.NewBuffer(requestPayloadByte))
 	if err != nil {
-		log.Errorf("Fail: %v", err)
 		return http.StatusInternalServerError, err
 	}
 
@@ -64,7 +59,6 @@ func (s *ServiceWebhookDriver) Execute(conf interface{}, apiClient *client.Ranch
 	hopRequest.SetBasicAuth(rancherConfig.CattleAccessKey, rancherConfig.CattleSecretKey)
 	resp, err := client.Do(hopRequest)
 	if err != nil {
-		log.Errorf("Error sending request to service:%v", err)
 		return http.StatusInternalServerError, err
 	}
 
@@ -73,12 +67,10 @@ func (s *ServiceWebhookDriver) Execute(conf interface{}, apiClient *client.Ranch
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Errorf("read from response body error:%v", err)
 		return http.StatusInternalServerError, err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode >= 400 {
-		log.Debugf("Response StatusCode: %v,Error: %v", resp.StatusCode, string(respBody))
 		return resp.StatusCode, errors.New(string(respBody))
 	}
 	log.Debugf("Response StatusCode: %v,Error: %v", resp.StatusCode, string(respBody))
@@ -108,13 +100,4 @@ func (s *ServiceWebhookDriver) GetDriverConfigResource() interface{} {
 
 func (s *ServiceWebhookDriver) CustomizeSchema(schema *v1client.Schema) *v1client.Schema {
 	return schema
-}
-
-func getProjectID(r *http.Request) (string, int, error) {
-	projectID := r.URL.Query().Get("projectId")
-	if projectID == "" {
-		return "", 400, fmt.Errorf("projectId must be supplied as query parameter")
-	}
-
-	return projectID, 0, nil
 }

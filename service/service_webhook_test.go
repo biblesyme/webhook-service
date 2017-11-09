@@ -30,7 +30,7 @@ func (s *MySuite) TestCreateAndUpgdateAndExcuteAndListAndDelete(c *C) {
 	// Test creating a webhook
 	constructURL := fmt.Sprintf("%s/v1-webhooks/receivers?projectId=1a1", server.URL)
 	jsonStr := []byte(`{"driver":"serviceWebhook","name":"wh-name",
-		"serviceWebhookConfig": {"serviceName": "pipeline-server", "port": "60080", "path": "/v1"}}`)
+		"serviceWebhookConfig": {"projectId": "1a5","serviceName": "pipeline-server", "port": "60080", "path": "/v1"}}`)
 	request, err := http.NewRequest("POST", constructURL, bytes.NewBuffer(jsonStr))
 	c.Assert(err, IsNil)
 
@@ -50,6 +50,7 @@ func (s *MySuite) TestCreateAndUpgdateAndExcuteAndListAndDelete(c *C) {
 	c.Assert(wh.Driver, Equals, "serviceWebhook")
 	c.Assert(wh.Id, Equals, "1")
 	c.Assert(wh.URL, Not(Equals), "")
+	c.Assert(wh.ServiceWebhookConfig.ProjectID, Equals, "1a5")
 	c.Assert(wh.ServiceWebhookConfig.ServiceName, Equals, "pipeline-server")
 	c.Assert(wh.ServiceWebhookConfig.Port, Equals, "60080")
 	c.Assert(wh.ServiceWebhookConfig.Path, Equals, "/v1")
@@ -75,6 +76,7 @@ func (s *MySuite) TestCreateAndUpgdateAndExcuteAndListAndDelete(c *C) {
 	c.Assert(wh.Driver, Equals, "serviceWebhook")
 	c.Assert(wh.Id, Equals, "1")
 	c.Assert(wh.URL, Not(Equals), "")
+	c.Assert(wh.ServiceWebhookConfig.ProjectID, Equals, "1a5")
 	c.Assert(wh.ServiceWebhookConfig.ServiceName, Equals, "pipeline-server")
 	c.Assert(wh.ServiceWebhookConfig.Port, Equals, "60080")
 	c.Assert(wh.ServiceWebhookConfig.Path, Equals, "/v1")
@@ -110,6 +112,7 @@ func (s *MySuite) TestCreateAndUpgdateAndExcuteAndListAndDelete(c *C) {
 	c.Assert(wh.Driver, Equals, "serviceWebhook")
 	c.Assert(wh.Id, Equals, "1")
 	c.Assert(wh.URL, Not(Equals), "")
+	c.Assert(wh.ServiceWebhookConfig.ProjectID, Equals, "1a5")
 	c.Assert(wh.ServiceWebhookConfig.ServiceName, Equals, "pipeline-server")
 	c.Assert(wh.ServiceWebhookConfig.Port, Equals, "60080")
 	c.Assert(wh.ServiceWebhookConfig.Path, Equals, "/v1")
